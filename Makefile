@@ -3,13 +3,13 @@ CXX = g++
 
 # Флаги компиляции
 CXXFLAGS = -O2 -std=c++17 \
-           -I/home/bulat/boinc/api \  # Путь для boinc_api.h
-           -I/home/bulat/boinc       # Путь для config.h
-           -I/home/bulat/boinc/lib   # Путь для filesys.h и mfile.h
+           -I/home/bulat/boinc/api \
+           -I/home/bulat/boinc \
+           -I/home/bulat/boinc/lib
 
 # Флаги для линковки
-LDFLAGS = -L/home/bulat/boinc/lib   # Путь для библиотек
-LIBS = -lboinc_api -lboinc -lpthread  # Линковка с библиотеками BOINC и pthread
+LDFLAGS = -L/home/bulat/boinc/lib
+LIBS = -lboinc_api -lboinc -lpthread
 
 # Целевой файл
 TARGET = latin_spectrum_1.0_x86_64-pc-linux-gnu
