@@ -21,11 +21,11 @@ OBJS   = src/main.o src/LatinSquare.o
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-<TAB>$(CXX) $(OBJS) -o $@ $(LIBS)
+	$(CXX) $(OBJS) -o $@ $(LIBS)
 
 src/%.o: src/%.cpp include/LatinSquare.h
-<TAB>$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Очистка
 clean:
-<TAB>rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJS) $(TARGET)
