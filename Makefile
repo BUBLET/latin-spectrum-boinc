@@ -5,7 +5,8 @@ CXX = g++
 CXXFLAGS = -O2 -std=c++17 \
            -I/home/bulat/boinc/api \
            -I/home/bulat/boinc \
-           -I/home/bulat/boinc/lib
+           -I/home/bulat/boinc/lib \
+		   -I./include
 
 # Флаги для линковки
 LDFLAGS = -L/home/bulat/boinc/lib
