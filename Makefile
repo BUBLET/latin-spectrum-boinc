@@ -2,11 +2,7 @@
 CXX = g++
 
 # Флаги компиляции
-CXXFLAGS = -O2 -std=c++17 \
-           -I/home/bulat/boinc/api \  # Путь для boinc_api.h
-           -I/home/bulat/boinc  \     # Путь для config.h
-           -I/home/bulat/boinc/lib  \ # Путь для filesys.h и mfile.h
-           -I./include               # Путь для LatinSquare.h (если файл в директории include)
+CXXFLAGS = -O2 -std=c++17 -I/home/bulat/boinc/api -I/home/bulat/boinc -I/home/bulat/boinc/lib -I./include
 
 # Флаги для линковки
 LDFLAGS = -L/home/bulat/boinc/lib   # Путь для библиотеки boinc
