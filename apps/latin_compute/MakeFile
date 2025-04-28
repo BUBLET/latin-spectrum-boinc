@@ -1,6 +1,11 @@
+# Указываем путь к исходникам BOINC
+BOINC_ROOT = /home/boinc
+
 CXX = g++
-CXXFLAGS = -O2 -std=c++17
-LDFLAGS = -lboinc_api
+# Добавляем include-путь BOINC
+CXXFLAGS = -O2 -std=c++17 -I$(BOINC_ROOT)/include
+# Добавляем библиотечный путь BOINC и линковку с boinc_api
+LDFLAGS = -L$(BOINC_ROOT)/lib -lboinc_api
 TARGET = latin_compute
 
 all: $(TARGET)
