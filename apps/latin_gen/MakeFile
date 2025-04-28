@@ -1,0 +1,12 @@
+CXX = g++
+CXXFLAGS = -O2 -std=c++17
+LDFLAGS = -lboinc_api
+TARGET = latin_gen
+
+all: $(TARGET)
+
+$(TARGET): gen_app.cpp
+	$(CXX) $(CXXFLAGS) gen_app.cpp -o $(TARGET) $(LDFLAGS)
+
+clean:
+	rm -f $(TARGET)

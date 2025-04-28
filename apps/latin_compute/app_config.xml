@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<app_config>
+  <app>
+    <name>latin_compute</name>
+    <version_num>1</version_num>
+    <exec_name>latin_compute</exec_name>
+    <command_line>latin_compute latin_square.txt</command_line>
+    <max_error_results>0</max_error_results>
+    <checkpointable/>
+  </app>
+</app_config>

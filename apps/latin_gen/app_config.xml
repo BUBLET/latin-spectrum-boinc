@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<app_config>
+  <app>
+    <name>latin_gen</name>
+    <version_num>1</version_num>
+    <exec_name>latin_gen</exec_name>
+    <command_line>latin_gen</command_line>
+    <max_error_results>0</max_error_results>
+  </app>
+</app_config>
