@@ -11,17 +11,17 @@ int main(int argc, char** argv) {
     int boinc_status = boinc_init();
     bool boinc_attached = (boinc_status == 0);
 
-    // Открываем входной файл (логическое имя "in.txt")
+    // Открываем входной файл (логическое имя "in")
     char input_path[512], output_path[512];
-    int retval = boinc_resolve_filename("in.txt", input_path, sizeof(input_path));
+    int retval = boinc_resolve_filename("in", input_path, sizeof(input_path));
     std::ifstream fin;
     if (retval == 0) {
         fin.open(input_path);    // BOINC-режим: открываем по физическому пути
     } else {
-        fin.open("in.txt");      // Автономный режим: пытаемся открыть "in.txt" из текущей директории
+        fin.open("in");      // Автономный режим: пытаемся открыть "in" из текущей директории
     }
     if (!fin) {
-        fprintf(stderr, "Error: cannot open input file in.txt\n");
+        fprintf(stderr, "Error: cannot open input file in\n");
         if (boinc_attached) boinc_finish(1);
         return 1;
     }
@@ -55,16 +55,16 @@ int main(int argc, char** argv) {
     bool hasOrthogonal = findOrthogonalMate(n);
     int numOrthogonal = hasOrthogonal ? 1 : 0;
 
-    // Открываем выходной файл (логическое имя "out.txt") и записываем результаты
-    retval = boinc_resolve_filename("out.txt", output_path, sizeof(output_path));
+    // Открываем выходной файл (логическое имя "out") и записываем результаты
+    retval = boinc_resolve_filename("out", output_path, sizeof(output_path));
     FILE* fout;
     if (retval == 0) {
         fout = boinc_fopen(output_path, "w");
     } else {
-        fout = fopen("out.txt", "w");
+        fout = fopen("out", "w");
     }
     if (!fout) {
-        fprintf(stderr, "Error: cannot open output file out.txt for writing\n");
+        fprintf(stderr, "Error: cannot open output file out for writing\n");
         if (boinc_attached) boinc_finish(1);
         return 1;
     }
