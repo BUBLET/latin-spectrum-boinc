@@ -5,12 +5,11 @@
         <platform>x86_64-pc-linux-gnu</platform>
         <executable>latin_spectrum_1.0_x86_64-pc-linux-gnu</executable>
         <file_ref>
-            <file_name>in.txt</file_name>
-            <open_name>in.txt</open_name>
+            <open_name>in</open_name>
         </file_ref>
         <file_ref>
-            <file_name>out.txt</file_name>
-            <open_name>out.txt</open_name>
+            <file_name><OUTFILE_0/></file_name>
+            <open_name>out</open_name>
         </file_ref>
     </app>
 </app_info>
