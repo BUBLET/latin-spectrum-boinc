@@ -1,87 +1,160 @@
-// LatinSquare.cpp
 #include "LatinSquare.h"
 #include <algorithm>
-#include <numeric>
 #include <random>
+#include <iostream>
+#include <functional>
 
-LatinSquare::LatinSquare(int n): n(n), grid(n, std::vector<int>(n)) {}
-
-void LatinSquare::generateRandom(unsigned int seed) {
-    for (int i = 0; i < n; i++)
-        for (int j = 0; j < n; j++)
-            grid[i][j] = (i + j) % n + 1;
-    if (!seed) return;
-    std::mt19937 gen(seed);
-    std::vector<int> permSym(n), permRow(n), permCol(n);
-    std::iota(permSym.begin(), permSym.end(), 1);
-    std::iota(permRow.begin(), permRow.end(), 0);
-    std::iota(permCol.begin(), permCol.end(), 0);
-    std::shuffle(permSym.begin(), permSym.end(), gen);
-    std::shuffle(permRow.begin(), permRow.end(), gen);
-    std::shuffle(permCol.begin(), permCol.end(), gen);
-    std::vector<std::vector<int>> tmp(n, std::vector<int>(n));
-    for (int i = 0; i < n; i++)
-        for (int j = 0; j < n; j++)
-            tmp[i][j] = permSym[grid[permRow[i]][permCol[j]] - 1];
-    grid.swap(tmp);
+// Constructor
+LatinSquare::LatinSquare(int n): n(n), data(n, std::vector<int>(n, -1)) {
 }
 
-int LatinSquare::countIntercalates() const {
-    int cnt = 0;
-    for (int i = 0; i < n; i++) for (int j = i+1; j < n; j++)
-    for (int c = 0; c < n; c++) for (int d = c+1; d < n; d++) {
-        auto a = grid[i][c], b = grid[i][d];
-        auto c2 = grid[j][c], d2 = grid[j][d];
-        if (a==d2 && b==c2 && a!=b) cnt++;
+// Return size
+int LatinSquare::size() const {
+    return n;
+}
+
+// Print function
+void LatinSquare::print() const {
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            std::cout << data[i][j] << " ";
+        }
+        std::cout << "\n";
     }
-    return cnt;
 }
 
-std::vector<std::tuple<int,int,int,int>> LatinSquare::findIntercalatePositions() const {
-    std::vector<std::tuple<int,int,int,int>> v;
-    for (int i = 0; i < n; i++) for (int j = i+1; j < n; j++)
-    for (int c = 0; c < n; c++) for (int d = c+1; d < n; d++) {
-        auto a = grid[i][c], b = grid[i][d];
-        auto c2 = grid[j][c], d2 = grid[j][d];
-        if (a==d2 && b==c2 && a!=b)
-            v.emplace_back(i,j,c,d);
+// Generate a random Latin square of order n
+bool LatinSquare::generate() {
+    if (n <= 0) return false;
+    // Initialize first row to 0..n-1
+    for (int j = 0; j < n; ++j) {
+        data[0][j] = j;
     }
-    return v;
-}
+    std::random_device rd;
+    std::mt19937 gen(rd());
 
-bool LatinSquare::rotateRandomIntercalate(std::mt19937 &gen) {
-    auto v = findIntercalatePositions();
-    if (v.empty()) return false;
-    std::uniform_int_distribution<size_t> dist(0, v.size()-1);
-    auto [i,j,c,d] = v[dist(gen)];
-    std::swap(grid[i][c], grid[i][d]);
-    std::swap(grid[j][c], grid[j][d]);
+    // Fill each subsequent row with a random permutation satisfying Latin conditions
+    for (int i = 1; i < n; ++i) {
+        // Available numbers for this row
+        std::vector<int> available(n);
+        for (int j = 0; j < n; ++j) available[j] = j;
+
+        // Shuffle available to randomize the order
+        std::shuffle(available.begin(), available.end(), gen);
+
+        // Place values in this row by backtracking to satisfy no column conflict
+        std::vector<int> row(n, -1);
+        std::function<bool(int)> place = [&](int col) -> bool {
+            if (col == n) return true;
+            for (int k = 0; k < (int)available.size(); ++k) {
+                int val = available[k];
+                bool used = false;
+                // Check column conflict
+                for (int r = 0; r < i; ++r) {
+                    if (data[r][col] == val) {
+                        used = true;
+                        break;
+                    }
+                }
+                if (used) continue;
+                // Place this value temporarily
+                row[col] = val;
+                int saved = available[k];
+                available.erase(available.begin() + k);
+
+                if (place(col + 1)) {
+                    return true;
+                }
+
+                // Backtrack
+                available.insert(available.begin() + k, saved);
+                row[col] = -1;
+            }
+            return false;
+        };
+
+        if (!place(0)) {
+            // If backtracking failed, restart generation
+            i = 0;
+            std::shuffle(available.begin(), available.end(), gen);
+            // Reset first row to random as well to vary
+            std::vector<int> firstRow(n);
+            for (int j = 0; j < n; ++j) firstRow[j] = j;
+            std::shuffle(firstRow.begin(), firstRow.end(), gen);
+            for (int j = 0; j < n; ++j) {
+                data[0][j] = firstRow[j];
+            }
+            // Clear all other rows
+            for (int r = 1; r < n; ++r) {
+                for (int c = 0; c < n; ++c) data[r][c] = -1;
+            }
+            i = 0;
+            continue;
+        }
+        // place succeeded, fill data for row i
+        for (int j = 0; j < n; ++j) {
+            data[i][j] = row[j];
+        }
+    }
     return true;
 }
 
-namespace {
-    bool backtrackTrans(const std::vector<std::vector<int>> &G, int n,
-                        int row, std::vector<bool> &usedCols,
-                        std::vector<bool> &usedSyms, int &count,
-                        int maxOps, long &opsPerformed, bool &aborted) {
-        if (aborted) return false;
-        if (row==n) { count++; return false; }
-        for (int col=0; col<n && !aborted; col++) {
-            if (++opsPerformed > maxOps) { aborted=true; break; }
-            int sym = G[row][col];
-            if (!usedCols[col] && !usedSyms[sym]) {
-                usedCols[col]=usedSyms[sym]=true;
-                backtrackTrans(G,n,row+1,usedCols,usedSyms,count,maxOps,opsPerformed,aborted);
-                usedCols[col]=usedSyms[sym]=false;
+// Count intercalations (2x2 Latin subsquares)
+int LatinSquare::countIntercalations() const {
+    int count = 0;
+    // iterate over pairs of rows and columns
+    for (int i = 0; i < n; ++i) {
+        for (int j = i+1; j < n; ++j) {
+            for (int k = 0; k < n; ++k) {
+                for (int l = k+1; l < n; ++l) {
+                    // Check if entries form an intercalate
+                    if (data[i][k] == data[j][l] && data[i][l] == data[j][k]) {
+                        if (data[i][k] != data[i][l]) {
+                            count++;
+                        }
+                    }
+                }
             }
         }
-        return !aborted;
     }
+    return count;
 }
 
-int LatinSquare::countTransversalsHeuristic(int maxOps, long &opsPerformed) const {
-    std::vector<bool> usedCols(n), usedSyms(n+1);
-    int count=0; bool aborted=false;
-    backtrackTrans(grid,n,0,usedCols,usedSyms,count,maxOps,opsPerformed,aborted);
-    return count;
+// Approximate count of transversals
+double LatinSquare::approximateTransversals(int tries) const {
+    if (tries <= 0 || n <= 0) return 0.0;
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::vector<int> perm(n);
+    for (int i = 0; i < n; ++i) perm[i] = i;
+    int success = 0;
+    for (int t = 0; t < tries; ++t) {
+        std::shuffle(perm.begin(), perm.end(), gen);
+        // Check if this permutation yields a transversal
+        std::vector<bool> usedValue(n, false);
+        bool ok = true;
+        for (int i = 0; i < n; ++i) {
+            int val = data[i][perm[i]];
+            if (usedValue[val]) {
+                ok = false;
+                break;
+            }
+            usedValue[val] = true;
+        }
+        if (ok) success++;
+    }
+    double factorial_n = factorial(n);
+    return (double)success / tries * factorial_n;
+}
+
+// factorial helper
+double LatinSquare::factorial(int x) {
+    static std::vector<double> fact = {1.0};
+    if ((int)fact.size() > x) {
+        return fact[x];
+    }
+    for (int i = fact.size(); i <= x; ++i) {
+        fact.push_back(fact.back() * i);
+    }
+    return fact[x];
 }

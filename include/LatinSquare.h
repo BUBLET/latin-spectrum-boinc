@@ -1,18 +1,34 @@
-// LatinSquare.h
-#pragma once
+#ifndef LATINSQUARE_H
+#define LATINSQUARE_H
+
 #include <vector>
-#include <tuple>
-#include <random>
 
 class LatinSquare {
 public:
     LatinSquare(int n);
-    void generateRandom(unsigned int seed);
-    int countIntercalates() const;
-    int countTransversalsHeuristic(int maxOps, long &opsPerformed) const;
-    bool rotateRandomIntercalate(std::mt19937 &gen);
+
+    // Accessors
+    int size() const;
+
+    // Generate a Latin Square (random generation)
+    bool generate();
+
+    // Count intercalations (2x2 Latin subsquares)
+    int countIntercalations() const;
+
+    // Approximate count of transversals using Monte Carlo
+    // tries: number of random permutations to sample
+    double approximateTransversals(int tries) const;
+
+    // Print the Latin Square to std::ostream
+    void print() const;
+
 private:
     int n;
-    std::vector<std::vector<int>> grid;
-    std::vector<std::tuple<int,int,int,int>> findIntercalatePositions() const;
+    std::vector<std::vector<int>> data;
+
+    // Helper: factorial of n
+    static double factorial(int n);
 };
+
+#endif // LATINSQUARE_H
