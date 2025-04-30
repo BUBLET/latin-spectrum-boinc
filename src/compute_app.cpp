@@ -1,4 +1,5 @@
 // compute_app.cpp
+#include <iostream>
 #include <fstream>
 #include <map>
 #include <random>
