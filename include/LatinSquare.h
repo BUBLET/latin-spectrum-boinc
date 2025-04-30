@@ -1,44 +1,42 @@
+// LatinSquare.h
 #ifndef LATINSQUARE_H
 #define LATINSQUARE_H
 
-// LatinSquare.h
-#pragma once
 #include <vector>
 #include <tuple>
 #include <random>
-#include <string>
 
 class LatinSquare {
 public:
-    LatinSquare(int n);
-    // Special constructors
-    static LatinSquare generateCyclic(int n);
-    static LatinSquare generateBackCirculant(int n);
-    static LatinSquare generateBrown(int n); // only odd n
+    explicit LatinSquare(int n);
 
-    // Randomization (seeded)
+    // Генерация: инициализация + рандомизация символов, строк и столбцов
     bool generateRandom(unsigned int seed);
 
-    // Counts
+    // Подсчёт интеркаляций (2×2 подсубквадраты)
     int countIntercalates() const;
+
+    // Точный бэктрекинг подсчёта трансверсалей (все перестановки столбцов)
     int countTransversalsExact() const;
-    int countTransversalsHeuristic(int maxOps) const;
 
-    // Neighborhood
-    using Pos4 = std::tuple<int,int,int,int>;
-    std::vector<Pos4> findIntercalatePositions() const;
-    bool rotateIntercalate(const Pos4 &pos);
+    // Эвристический (с ограничением операций) подсчёт трансверсалей
+    // opsPerformed возвращает реальное число проверенных размещений
+    int countTransversalsHeuristic(int maxOps, long &opsPerformed) const;
 
-    // Canonical string for hashing
-    std::string toString() const;
+    // Поворот случайной интеркаляции
+    bool rotateRandomIntercalate(std::mt19937 &gen);
 
 private:
     int n;
     std::vector<std::vector<int>> grid;
-    int backtrackTransExact(int row,
-            std::vector<bool> &usedCols,
-            std::vector<bool> &usedSyms) const;
-};
 
+    // Поиск всех позиций интеркаляций
+    std::vector<std::tuple<int,int,int,int>> findIntercalatePositions() const;
+
+    // Вспомогательный бэктрекинг для точного подсчёта трансверсалей
+    int backtrackTrans(int row,
+                       std::vector<bool> &usedCols,
+                       std::vector<bool> &usedSyms) const;
+};
 
 #endif // LATINSQUARE_H
