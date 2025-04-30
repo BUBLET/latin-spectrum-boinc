@@ -7,19 +7,37 @@
 
 int main() {
     boinc_init();
-    int n, task_id, num_tasks, restarts, moves_per, maxTransOps;
+    int n = 0, task_id = 0, num_tasks = 1, restarts = 0, moves_per = 0, maxTransOps = 0;
     std::ifstream fin("in");
-    while (fin >> std::ws) {
-        std::string key; fin >> key;
-        if (key=="n") fin>>n;
-        else if (key=="task_id") fin>>task_id;
-        else if (key=="num_tasks") fin>>num_tasks;
-        else if (key=="restarts") fin>>restarts;
-        else if (key=="moves_per") fin>>moves_per;
-        else if (key=="maxTransOps") fin>>maxTransOps;
+    if (!fin.is_open()) {
+        std::cerr << "Error: cannot open input file 'in'\n";
+        boinc_finish(1);
+        return 1;
+    }
+    
+    std::string key;
+    int value;
+    while (fin >> key >> value) {
+        if (key == "n")           n = value;
+        else if (key == "task_id")   task_id = value;
+        else if (key == "num_tasks") num_tasks = value;
+        else if (key == "restarts")  restarts = value;
+        else if (key == "moves_per") moves_per = value;
+        else if (key == "maxTransOps") maxTransOps = value;
     }
     fin.close();
-    if (n<6||n>20) boinc_finish(1);
+    
+    // Проверка валидности
+    if (n < 6 || n > 20 ||
+        num_tasks < 1 ||
+        restarts <= 0 ||
+        moves_per < 0 ||
+        maxTransOps <= 0) {
+        std::cerr << "Bad parameters in 'in' file\n";
+        boinc_finish(1);
+        return 1;
+    }
+    
 
     std::map<int,int> histI, histT;
     long totalOps=0;
