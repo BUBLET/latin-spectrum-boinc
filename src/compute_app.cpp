@@ -1,4 +1,3 @@
-// compute_app.cpp
 #include <iostream>
 #include <fstream>
 #include <map>
@@ -19,15 +18,24 @@ int main() {
     std::string key;
     int value;
     while (fin >> key >> value) {
-        if (key == "n")           n = value;
-        else if (key == "task_id")   task_id = value;
-        else if (key == "num_tasks") num_tasks = value;
-        else if (key == "restarts")  restarts = value;
-        else if (key == "moves_per") moves_per = value;
+        if (key == "n")            n = value;
+        else if (key == "task_id")     task_id = value;
+        else if (key == "num_tasks")   num_tasks = value;
+        else if (key == "restarts")    restarts = value;
+        else if (key == "moves_per")   moves_per = value;
         else if (key == "maxTransOps") maxTransOps = value;
     }
     fin.close();
-    
+
+    // Диагностика
+    std::cerr << "DEBUG: n=" << n
+              << " task_id=" << task_id
+              << " num_tasks=" << num_tasks
+              << " restarts=" << restarts
+              << " moves_per=" << moves_per
+              << " maxTransOps=" << maxTransOps
+              << "\n";
+
     // Проверка валидности
     if (n < 6 || n > 20 ||
         num_tasks < 1 ||
