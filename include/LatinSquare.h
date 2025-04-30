@@ -1,34 +1,44 @@
 #ifndef LATINSQUARE_H
 #define LATINSQUARE_H
 
+// LatinSquare.h
+#pragma once
 #include <vector>
+#include <tuple>
+#include <random>
+#include <string>
 
 class LatinSquare {
 public:
     LatinSquare(int n);
+    // Special constructors
+    static LatinSquare generateCyclic(int n);
+    static LatinSquare generateBackCirculant(int n);
+    static LatinSquare generateBrown(int n); // only odd n
 
-    // Accessors
-    int size() const;
+    // Randomization (seeded)
+    bool generateRandom(unsigned int seed);
 
-    // Generate a Latin Square (random generation)
-    bool generate();
+    // Counts
+    int countIntercalates() const;
+    int countTransversalsExact() const;
+    int countTransversalsHeuristic(int maxOps) const;
 
-    // Count intercalations (2x2 Latin subsquares)
-    int countIntercalations() const;
+    // Neighborhood
+    using Pos4 = std::tuple<int,int,int,int>;
+    std::vector<Pos4> findIntercalatePositions() const;
+    bool rotateIntercalate(const Pos4 &pos);
 
-    // Approximate count of transversals using Monte Carlo
-    // tries: number of random permutations to sample
-    double approximateTransversals(int tries) const;
-
-    // Print the Latin Square to std::ostream
-    void print() const;
+    // Canonical string for hashing
+    std::string toString() const;
 
 private:
     int n;
-    std::vector<std::vector<int>> data;
-
-    // Helper: factorial of n
-    static double factorial(int n);
+    std::vector<std::vector<int>> grid;
+    int backtrackTransExact(int row,
+            std::vector<bool> &usedCols,
+            std::vector<bool> &usedSyms) const;
 };
+
 
 #endif // LATINSQUARE_H
