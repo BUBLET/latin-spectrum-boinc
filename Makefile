@@ -9,10 +9,10 @@ LDFLAGS = -L/home/bulat/boinc/lib   # Путь для библиотеки boinc
 LIBS = -L/home/bulat/boinc/api -lboinc_api -L/home/bulat/boinc/lib -lboinc -lpthread  # Линковка с библиотеками BOINC и pthread
 
 # Целевой файл
-TARGET = latin_spectrum_1.0_x86_64-pc-linux-gnu
+TARGET = latin_calc
 
 # Объектные файлы
-OBJS   = src/main.o src/LatinSquare.o
+OBJS   = src/compute_app.o src/LatinSquare.o
 
 # Правила сборки
 all: $(TARGET)
