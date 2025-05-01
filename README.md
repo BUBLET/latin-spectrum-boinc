@@ -41,7 +41,7 @@ cd ~/projects/<имя проекта>
 cp ~/latin-spectrum-boinc/latin_spectrum_in templates
 cp ~/latin-spectrum-boinc/latin_spectrum_out templates
 ```
-Добавьте следующее в ~/projects/test/config.xml, в раздел <daemons>:
+Добавьте следующее в ~/projects/<имя проекта>/config.xml, в раздел <daemons>:
 ```
       <daemon>
           <cmd>sample_trivial_validator --app latin_spectrum</cmd>
@@ -61,7 +61,7 @@ projects/
 ```
 Затем переместите собранный исполняемый файл в эту директорию.
 ```
-cd ~/projects<имя проекта>/apps/uppercase/1.0/x86_64-pc-linux-gnu
+cd ~/projects<имя проекта>/apps/latin_spectrum/1.0/x86_64-pc-linux-gnu
 cp ~/latin-spectrum-boinc/latin_spectrum .
 cp ~/boinc/apps/version.xml .
 ```
