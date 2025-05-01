@@ -6,7 +6,7 @@
 
 ## Структура
 
-```plaintext
+```
 latin-spectrum-boinc/
 ├── include/               # Заголовочные файлы и описания API
 │   └── LatinSquare.h      # Представления латинских квадратов и вспомогательные функции
@@ -19,5 +19,6 @@ latin-spectrum-boinc/
 ├── app_info.xml
 ├── Makefile # Скрипт генерации бинарника
 └── README.md
+```
     
 ## Установка
