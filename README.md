@@ -20,12 +20,10 @@ latin-spectrum-boinc/
 ├── Makefile # Скрипт генерации бинарника
 └── README.md
 ```
-## Логика клиентского приложения (`compute_app`)
-
-
+## Логика приложения
 1. **Чтение параметров**  
 Приложение получает из входного файла (`in`) набор ключ-значение:
-```cpp
+```xml
    n             — порядок латинского квадрата
    task_id       — номер этой части работы (0…num_tasks–1)
    num_tasks     — всего частей работы
@@ -91,7 +89,7 @@ int t_heur = ls.countTransversalsHeuristic(maxTransOps, opsPerformed);
 
 7. **Запись результата**
 По завершении всех рестартов клиент формирует XML:
-```
+```xml
 <results>
   <stat
     n="7"
@@ -106,26 +104,26 @@ int t_heur = ls.countTransversalsHeuristic(maxTransOps, opsPerformed);
 
 ## Установка на локальный сервер BOINC
 Соберите BOINC сервер в соответствии с официальной инструкцией
-```
+```bash
 https://github.com/BOINC/boinc/wiki/Create-a-BOINC-server-(cookbook)
 ```
 Клонируйте репозиторий:
-```
+```bash
 git clone https://github.com/BUBLET/latin-spectrum-boinc
 ```
 Соберите приложение:
-```
+```bash
 cd ~/latin-spectrum-boinc
 make
 ```
 Перейдите в папку с вашим проектом и скопируйте файлы с описанием входных и выходных файлов приложения в папку templates
-```
+```bash
 cd ~/projects/<имя проекта>
 cp ~/latin-spectrum-boinc/latin_spectrum_in templates
 cp ~/latin-spectrum-boinc/latin_spectrum_out templates
 ```
 Добавьте следующее в ~/projects/<имя проекта>/config.xml, в раздел <daemons>:
-```
+```xml
       <daemon>
           <cmd>sample_trivial_validator --app latin_spectrum</cmd>
       </daemon>
@@ -135,7 +133,7 @@ cp ~/latin-spectrum-boinc/latin_spectrum_out templates
 ```
 В Firefox перейдите на веб-страницу администратора: http://<адрес проекта>/<имя проекта>_ops. Нажмите «Manage applications». Добавьте приложение с именем "Latin Spectrum".     
 Создайте следующую структуру каталогов:
-```
+```bash
 projects/
     <имя проекта>/
         apps/
@@ -144,18 +142,18 @@ projects/
                     x86_64-pc-linux-gnu/
 ```
 Затем переместите собранный исполняемый файл в эту директорию.
-```
+```bash
 cd ~/projects<имя проекта>/apps/latin_spectrum/1.0/x86_64-pc-linux-gnu
 cp ~/latin-spectrum-boinc/latin_spectrum .
 cp ~/boinc/apps/version.xml .
 ```
 Обновите версию приложения
-```
+```bash
 cd ~/projects/<имя проекта>
 bin/update_versions
 ```
 Перезапустите демоны
-```
+```basg
 cd ~/projects/<имя проекта>
 bin/stop
 bin/start
@@ -166,7 +164,7 @@ bin/start
 
 Настройте .wus.conf со следующим содержимым:
 
-```
+```conf
 # Путь к корню проекта
 PROJECT_DIR=~/projects/latin_spectrum 
 
@@ -193,17 +191,17 @@ N_END=20
 ### Запуск скрипта create_workunits.sh
 Перейдите в корень проекта и скопируйте файлы .wus.conf и create_workunits.sh:
 
-```
+```bash
 cd ~/projects/<имя проекта>
 cp ~/latin-spectrum-boinc/scripts .
 ```
 Сделайте скрипт исполняемым:
-```
+```bash
 chmod +x create_workunits.sh
 ```
 Запустите его:
 
-```
+```bash
 ./scripts/create_workunits.sh
 ```
 Скрипт:
