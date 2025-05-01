@@ -20,3 +20,4 @@ latin-spectrum-boinc/
 ├── Makefile # Скрипт генерации бинарника
 └── README.md
     
+## Установка
