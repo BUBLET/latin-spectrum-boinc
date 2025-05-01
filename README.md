@@ -25,7 +25,7 @@ latin-spectrum-boinc/
 
 1. **Чтение параметров**  
 Приложение получает из входного файла (`in`) набор ключ-значение:
-```
+```cpp
    n             — порядок латинского квадрата
    task_id       — номер этой части работы (0…num_tasks–1)
    num_tasks     — всего частей работы
@@ -38,14 +38,14 @@ latin-spectrum-boinc/
 2. **Подготовка генератора случайных чисел**
 Для каждого рестарта формируется своё зерно:
 
-```
+```cpp
 unsigned int seed = task_id + restart_index * num_tasks;
 std::mt19937 gen(seed);
 ```
 Таким образом разные клиентские задачи и рестарты работают на разных подпространствах.
 
 3. **Генерация начального латинского квадрата**
-```
+```cpp
 LatinSquare ls(n);
 ls.generateRandom(seed);
 ```
@@ -57,27 +57,27 @@ ls.generateRandom(seed);
 
 4. **Эвристические локальные преобразования**
 Повторить moves_per раз:
-```
+```cpp
 ls.rotateRandomIntercalate(gen);
 ```
 + findIntercalatePositions() ищет все пары строк и столбцов (i,j,c,d), образующие интеркальты.
 + Из них случайно выбирается один, и в нём меняются местами диагональные элементы:
-```
+```cpp
 swap(grid[i][c], grid[i][d]);
 swap(grid[j][c], grid[j][d]);
 ```
 5. **Подсчёт характеристик**
 + Число интеркалятов:
-```
+```cpp
 int intercalates = ls.countIntercalates();
 ```
 + Трансверсали — точный или эвристический подсчёт
 Точный (полный бэктрекинг):
-```
+```cpp
 int t_exact = ls.countTransversalsExact();
 ```
 Эвристический (с ограничением maxTransOps):
-```
+```cpp
 long opsPerformed = 0;
 int t_heur = ls.countTransversalsHeuristic(maxTransOps, opsPerformed);
 ```
