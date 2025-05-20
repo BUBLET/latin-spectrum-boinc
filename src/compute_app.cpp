@@ -3,15 +3,50 @@
 #include <vector>
 #include <map>
 #include <random>
+#include <sstream>
 #include "LatinSquare.h"
 #include "boinc_api.h"
 
 struct StatEntry {
     int n;
     unsigned int seed;
+    int move;
     int intercalates;
     int transversals;
+    std::vector<int> matrix_flat; // n*n элементов
 };
+
+// Сериализация grid в одномерный массив (построчно)
+std::vector<int> flatten_grid(const std::vector<std::vector<int>>& grid) {
+    std::vector<int> out;
+    for (const auto& row : grid)
+        for (int x : row) out.push_back(x);
+    return out;
+}
+
+// Преобразование flat-массива в строку для вывода
+std::string grid_to_str(const std::vector<int>& flat) {
+    std::ostringstream oss;
+    oss << "[";
+    for (size_t i = 0; i < flat.size(); ++i) {
+        if (i > 0) oss << ",";
+        oss << flat[i];
+    }
+    oss << "]";
+    return oss.str();
+}
+
+// Вывод словаря (почти JSON)
+void print_dict(std::ofstream& fout, const StatEntry& s) {
+    fout << "{";
+    fout << "\"n\":" << s.n << ",";
+    fout << "\"seed\":" << s.seed << ",";
+    fout << "\"move\":" << s.move << ",";
+    fout << "\"intercalates\":" << s.intercalates << ",";
+    fout << "\"transversals\":" << s.transversals << ",";
+    fout << "\"matrix\":" << grid_to_str(s.matrix_flat);
+    fout << "}\n";
+}
 
 int main(int argc, char** argv) {
     if (boinc_init() != 0) {
@@ -60,25 +95,19 @@ int main(int argc, char** argv) {
         LatinSquare L(n);
         L.generateRandom(seed);
 
-        int ic = L.countIntercalates();
-        long ops = 0;
-        int tc = (n <= 6)
-                 ? L.countTransversalsExact()
-                 : L.countTransversalsHeuristic(maxTransOps, ops);
-        totalOps += ops;
-        histI[ic]++; histT[tc]++;
-        stats.push_back({n, seed, ic, tc});
-
-        for (int mv = 0; mv < moves_per; ++mv) {
-            if (!L.rotateRandomIntercalate(gen)) break;
-            ic = L.countIntercalates();
-            tc = (n <= 6)
-                 ? L.countTransversalsExact()
-                 : L.countTransversalsHeuristic(maxTransOps, ops);
+        // Все квадраты: исходный и moves_per мутаций
+        for (int mv = 0; mv <= moves_per; ++mv) {
+            int ic = L.countIntercalates();
+            long ops = 0;
+            int tc = (n <= 6)
+                     ? L.countTransversalsExact()
+                     : L.countTransversalsHeuristic(maxTransOps, ops);
             totalOps += ops;
             histI[ic]++; histT[tc]++;
-            // seed+1000000*mv чтобы все строчки уникально различались (или можно просто писать тот же seed и mv)
-            stats.push_back({n, seed, ic, tc});
+            stats.push_back({n, seed, mv, ic, tc, flatten_grid(L.getGrid())});
+            if (mv < moves_per) {
+                if (!L.rotateRandomIntercalate(gen)) break;
+            }
         }
     }
 
@@ -88,10 +117,9 @@ int main(int argc, char** argv) {
         boinc_finish(1);
     }
 
-    // Сначала выводим таблицу по каждому квадрату
-    fout << "n seed intercalates transversals\n";
+    // По одному dict на строку (легко парсить)
     for (const auto& s : stats)
-        fout << s.n << " " << s.seed << " " << s.intercalates << " " << s.transversals << "\n";
+        print_dict(fout, s);
 
     fout << "\n";
     fout << "intercalates_spectrum min="  << histI.begin()->first

@@ -14,6 +14,7 @@ public:
     int countTransversalsExact() const;
     int countTransversalsHeuristic(int maxOps, long &opsPerformed) const;
     bool rotateRandomIntercalate(std::mt19937 &gen);
+    const std::vector<std::vector<int>>& getGrid() const { return grid; }
 
 private:
     int n;
