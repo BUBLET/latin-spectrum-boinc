@@ -1,4 +1,3 @@
-// LatinSquare.cpp
 #include "LatinSquare.h"
 #include <numeric>
 #include <algorithm>
@@ -9,7 +8,6 @@ LatinSquare::LatinSquare(int n)
     : n(n), grid(n, std::vector<int>(n)) {}
 
 bool LatinSquare::generateRandom(unsigned int seed) {
-    // Базовый латинский квадрат (i+j)%n
     for (int i = 0; i < n; ++i)
         for (int j = 0; j < n; ++j)
             grid[i][j] = (i + j) % n;
@@ -19,13 +17,11 @@ bool LatinSquare::generateRandom(unsigned int seed) {
     std::vector<int> perm(n);
     std::iota(perm.begin(), perm.end(), 0);
 
-    // Перестановка символов
     std::shuffle(perm.begin(), perm.end(), gen);
     for (int i = 0; i < n; ++i)
         for (int j = 0; j < n; ++j)
             grid[i][j] = perm[grid[i][j]];
 
-    // Перестановка строк и столбцов
     std::shuffle(grid.begin(), grid.end(), gen);
     for (auto &row : grid)
         std::shuffle(row.begin(), row.end(), gen);
